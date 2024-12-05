@@ -1,0 +1,52 @@
+# Docker Compose file for the Calculator Application (Frontend and Backend)
+version: '3.9'
+
+services:
+  frontend:
+    # Specify the build context for the React frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    # Map the host port to the container port
+    ports:
+      - "3000:3000"
+    # Specify dependencies
+    depends_on:
+      - backend
+    # Environment variables for React app (if applicable)
+    environment:
+      - NODE_ENV=production
+    # Optional: Use volumes for development (live reloading)
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    # Command to override default (if needed)
+    command: npm start
+
+  backend:
+    # Specify the build context for the Python backend API
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # Map the host port to the container port
+    ports:
+      - "5000:5000"
+    # Environment variables for the backend API
+    environment:
+      - FLASK_ENV=production
+      - PORT=5000
+    # Optional: Use volumes for development (live reloading)
+    volumes:
+      - ./backend:/app
+    # Command to run the Flask app
+    command: python app.py
+
+# Optional: Define a custom network for the application
+networks:
+  default:
+    driver: bridge
+
+# Optional: Define volumes (for persistent data storage if needed)
+volumes:
+  frontend_node_modules:
+  backend_data:
